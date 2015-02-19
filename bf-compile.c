@@ -9,44 +9,13 @@ C program to compile brainfuck to assembly
 
 #define SUCCESS 0
 
-char *change_ext (const char* fname, char dot, char sep, const char* new) {
-	char *retstr, *lastdot, *lastsep;
-
-	// Error checks and allocate string
-	if (fname == NULL)
-		return NULL;
-	if ((retstr = malloc(strlen(fname) + 4)) == NULL)
-		return NULL;
-
-	strcpy(retstr, fname);
-	lastdot = strrchr(retstr, dot);
-	lastsep = (sep == 0) ? NULL : strrchr(retstr, sep);
-
-	// If it has an extension separator
-	if (lastdot != NULL) {
-		// and it is after the last separator
-		if (lastsep != NULL) {
-			if (lastsep < lastdot) {
-				*lastdot = new;
-			}
-		} else {
-			// Has extension with no path separator
-			*lastdot = new;
-		}
-	}
-
-	return retstr;
-
-}
-
 int compile_bf(const char *filename) {
 
 	unsigned int ptr = 0;
 	FILE *source;
 	FILE *out;
-	char* dest;
-	char* obj;
-	int c;
+	char *dest, *obj, *dot;
+	int c, len;
 	int jmpId = 0;
 	int *jmpStack;
 
@@ -55,14 +24,20 @@ int compile_bf(const char *filename) {
 		return -1;
 	}
 	
-	dest = change_ext(filename, '.', '/', ".asm");
+	dot = strrchr(filename, '.');
+	if (dot) len = dot - filename;
+	else len = strlen(filename);
+	dest = malloc(len + 5);
+	strncpy(dest, filename, len);
+	strcpy(dest + len, ".asm");
+	obj = malloc(len + 5);
+	strncpy(obj, filename, len);
+	strcpy(obj + len, ".o");
 
 	if ((out = fopen(dest, "wb")) == NULL) {
 		fprintf(stderr, "Could not create file %s", dest);
 		return -1;
-	}
-
-	obj = change_ext(filename, '.', '/', ".o");
+	}	
 
 	// Header information in assembly file
 	fputs("; ", out);
@@ -73,7 +48,7 @@ int compile_bf(const char *filename) {
 	fputs(obj, out);
 	fputs(" ", out);
 	fputs(dest, out);
-	fputs("\nlink: ld ", out);
+	fputs("\n; link: ld ", out);
 	fputs(obj, out);
 	fputs(" <cmd>\n\n", out);
 
@@ -92,9 +67,11 @@ int compile_bf(const char *filename) {
 				fputs("; <\n  dec di\n", out);
 				break;
 			case '+': 
-				fputs("; +\n  mov ax,[di]\n  inc ax\n  mov [di],ax\n", out);
+				fputs("; +\n  mov eax,[di]\n  inc eax\n  mov [di],eax\n", out);
 				break;
-			case '-': break;
+			case '-':
+				fputs("; +\n  mov eax,[di]\n  dec eax\n  mov [di],eax\n", out);
+				break;
 			case '.': break;
 			case ',': break;
 			case '[': break;
@@ -105,7 +82,7 @@ int compile_bf(const char *filename) {
 	}
 
 	free(dest);
-	free(out);
+	free(obj);
 
 	return SUCCESS;
 }
