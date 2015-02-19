@@ -16,7 +16,7 @@ int compile_bf(const char *filename) {
 	FILE *out;
 	char *dest, *obj, *dot;
 	int c, len;
-	int jmpId = 0;
+	int jmpId = 0, bufSize = 0;
 	int *jmpStack;
 
 	if ((source = fopen(filename, "rb")) == NULL) {
@@ -44,7 +44,7 @@ int compile_bf(const char *filename) {
 	fputs(dest, out);
 	fputs("\n; compiled from ", out);
 	fputs(filename, out);
-	fputs("; assemble: nasm -f elf -o ", out);
+	fputs("\n; assemble: nasm -f elf64 -o ", out);
 	fputs(obj, out);
 	fputs(" ", out);
 	fputs(dest, out);
@@ -55,26 +55,27 @@ int compile_bf(const char *filename) {
 	fputs("_start:\n", out);
 
 	// Start of program in assembly file
-	fputs("  mov bh,0xa0\n", out);
-	fputs("  mov di,bx\n", out);
+	fputs("  mov ebx,buffer\n", out);
+	fputs("  mov edi,ebx\n", out);
 
 	// Read in characters and write out assembly to handle them
 	while ((c = fgetc(source)) != EOF) {
 		switch(c) {
 			case '>':
-				fputs("; >\n  inc di\n", out);
+				fputs("; >\n  inc edi\n", out);
+				bufSize++;
 				break;
 			case '<': 
-				fputs("; <\n  dec di\n", out);
+				fputs("; <\n  dec edi\n", out);
 				break;
 			case '+': 
-				fputs("; +\n  mov eax,[di]\n  inc eax\n  mov [di],eax\n", out);
+				fputs("; +\n  mov rax,[edi]\n  inc rax\n  mov [edi],rax\n", out);
 				break;
 			case '-':
-				fputs("; +\n  mov eax,[di]\n  dec eax\n  mov [di],eax\n", out);
+				fputs("; +\n  mov rax,[edi]\n  dec rax\n  mov [edi],rax\n", out);
 				break;
 			case '.': 
-				fputs("; .\n  mov eax, [di]\n  push eax\n  call putchar\n", out);
+				fputs("; .\n  mov rax,[edi]\n  push rax\n  call putchar\n", out);
 				break;
 			case ',': break;
 			case '[':
@@ -84,6 +85,9 @@ int compile_bf(const char *filename) {
 			default: break;
 		}
 	}
+	fputs("\n\nsection .data\n\nbuffer: times ", out);
+	fprintf(out, "%d", bufSize);
+	fputs(" db 0\n", out);
 
 	free(dest);
 	free(obj);
