@@ -51,7 +51,7 @@ int compile_bf(const char *filename) {
 	fputs("\n; link: ld ", out);
 	fputs(obj, out);
 	fputs(" <cmd>\n", out);
-	fputs(";\n;\nextern putchar\nglobal _start\n\nsection .text\n", out);
+	fputs(";\n;\nglobal _start\nextern putchar\n\nsection .text\n", out);
 	fputs("_start:\n", out);
 
 	// Start of program in assembly file
@@ -74,7 +74,7 @@ int compile_bf(const char *filename) {
 				fputs("; +\n  mov eax,[di]\n  dec eax\n  mov [di],eax\n", out);
 				break;
 			case '.': 
-				fputs("; .\n mov eax, [di]\n  push eax\n  call putchar\n", out);
+				fputs("; .\n  mov eax, [di]\n  push eax\n  call putchar\n", out);
 				break;
 			case ',': break;
 			case '[':
