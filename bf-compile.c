@@ -47,7 +47,8 @@ int compile_bf(const char *filename) {
 	char* dest;
 	char* obj;
 	int c;
-	int jmp = 0;
+	int jmpId = 0;
+	int *jmpStack;
 
 	if ((source = fopen(filename, "rb")) == NULL) {
 		fprintf(stderr, "Could not open file %s", filename);
@@ -74,25 +75,30 @@ int compile_bf(const char *filename) {
 	fputs(dest, out);
 	fputs("\nlink: ld ", out);
 	fputs(obj, out);
-	fputs(" <cmd>", out);
-	fputs("\n\n", out);
+	fputs(" <cmd>\n\n", out);
 
 	// Start of program in assembly file
 	fputs("main:\n", out);
-	fputs("\tmov\tbh,0xa0\n", out);
-	fputs("\tmov\tdi,bx\n", out);
+	fputs("  mov bh,0xa0\n", out);
+	fputs("  mov di,bx\n", out);
 
 	// Read in characters and write out assembly to handle them
 	while ((c = fgetc(source)) != EOF) {
 		switch(c) {
-			case '>': 
+			case '>':
+				fputs("; >\n  inc di\n", out);
 				break;
-			case '<': break;
-			case '+': break;
+			case '<': 
+				fputs("; <\n  dec di\n", out);
+				break;
+			case '+': 
+				fputs("; +\n  mov ax,[di]\n  inc ax\n  mov [di],ax\n", out);
+				break;
 			case '-': break;
 			case '.': break;
 			case ',': break;
 			case '[': break;
+				jmpId++;
 			case ']': break;
 			default: break;
 		}
@@ -101,7 +107,7 @@ int compile_bf(const char *filename) {
 	free(dest);
 	free(out);
 
-
+	return SUCCESS;
 }
 
 int main(int argc, const char *argv[])
