@@ -50,10 +50,11 @@ int compile_bf(const char *filename) {
 	fputs(dest, out);
 	fputs("\n; link: ld ", out);
 	fputs(obj, out);
-	fputs(" <cmd>\n\n", out);
+	fputs(" <cmd>\n", out);
+	fputs(";\n;\nextern putchar\nglobal _start\n\nsection .text\n", out);
+	fputs("_start:\n", out);
 
 	// Start of program in assembly file
-	fputs("main:\n", out);
 	fputs("  mov bh,0xa0\n", out);
 	fputs("  mov di,bx\n", out);
 
@@ -72,10 +73,13 @@ int compile_bf(const char *filename) {
 			case '-':
 				fputs("; +\n  mov eax,[di]\n  dec eax\n  mov [di],eax\n", out);
 				break;
-			case '.': break;
+			case '.': 
+				fputs("; .\n mov eax, [di]\n  push eax\n  call putchar\n", out);
+				break;
 			case ',': break;
-			case '[': break;
+			case '[':
 				jmpId++;
+				break;
 			case ']': break;
 			default: break;
 		}
