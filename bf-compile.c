@@ -15,9 +15,9 @@ int compile_bf(const char *filename) {
 	FILE *source;
 	FILE *out;
 	char *dest, *obj, *dot;
-	int c, len;
-	int jmpId = 0, bufSize = 0;
-	int *jmpStack;
+	int c, len, id;
+	int jmpId = 0, jmpPtr = 0, bufSize = 0, getId = 0;
+	char jmpStack[100];
 
 	if ((source = fopen(filename, "rb")) == NULL) {
 		fprintf(stderr, "Could not open file %s", filename);
@@ -48,46 +48,61 @@ int compile_bf(const char *filename) {
 	fputs(obj, out);
 	fputs(" ", out);
 	fputs(dest, out);
-	fputs("\n; link: ld ", out);
+	fputs("\n; link: gcc -o <cmd> ", out);
 	fputs(obj, out);
-	fputs(" <cmd>\n", out);
-	fputs(";\n;\nglobal _start\nextern putchar\n\nsection .text\n", out);
-	fputs("_start:\n", out);
+	fputs("\n;\n;\nglobal main\nextern putchar\n\nsection .text\n", out);
+	fputs("main:\n", out);
 
 	// Start of program in assembly file
-	fputs("  mov ebx,buffer\n", out);
-	fputs("  mov edi,ebx\n", out);
 
 	// Read in characters and write out assembly to handle them
 	while ((c = fgetc(source)) != EOF) {
 		switch(c) {
 			case '>':
-				fputs("; >\n  inc edi\n", out);
-				bufSize++;
+				fputs("; >\n  add esp,8\n", out);
 				break;
 			case '<': 
-				fputs("; <\n  dec edi\n", out);
+				fputs("; <\n  sub esp,8\n", out);
 				break;
 			case '+': 
-				fputs("; +\n  mov rax,[edi]\n  inc rax\n  mov [edi],rax\n", out);
+				fputs("; +\n  mov rax,[esp]\n  inc rax\n  mov [esp],rax\n", out);
 				break;
 			case '-':
-				fputs("; +\n  mov rax,[edi]\n  dec rax\n  mov [edi],rax\n", out);
+				fputs("; +\n  mov rax,[esp]\n  dec rax\n  mov [esp],rax\n", out);
 				break;
 			case '.': 
-				fputs("; .\n  mov rax,[edi]\n  push rax\n  call putchar\n", out);
+				fputs("; .\n  mov rax,[esp]\n  push rax\n  call putchar\n", out);
 				break;
-			case ',': break;
+			case ',': 
+				fputs("; ,\ngetch", out);
+				fprintf(out, "%d", getId);
+				fputs(":\n  call getchar\n  cmp rax,0\n  jl getch", out);
+				fprintf(out, "%d", getId);
+				fputs("\n", out);
+				getId++;
+				break;
 			case '[':
+				fputs("; [\nloops", out);
+				fprintf(out, "%d", jmpId);
+				fputs(":\n  mov rax,[esp]\n  cmp rax,0\n  je loope", out);
+				fprintf(out, "%d", jmpId);
+				fputs("\n", out);
+				jmpStack[jmpPtr] = jmpId;
 				jmpId++;
+				jmpPtr++;
 				break;
-			case ']': break;
+			case ']':
+				jmpPtr--;
+				id = jmpStack[jmpPtr];
+				fputs("; ]\n  mov rax,[esp]\n  cmp rax,0\n  jne loops", out);
+				fprintf(out, "%d", id);
+				fputs("\nloope", out);
+				fprintf(out, "%d", id);
+				fputs(":\n", out);
+				break;
 			default: break;
 		}
 	}
-	fputs("\n\nsection .data\n\nbuffer: times ", out);
-	fprintf(out, "%d", bufSize);
-	fputs(" db 0\n", out);
 
 	free(dest);
 	free(obj);
