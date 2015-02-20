@@ -50,8 +50,9 @@ int compile_bf(const char *filename) {
 	fputs(dest, out);
 	fputs("\n; link: gcc -o <cmd> ", out);
 	fputs(obj, out);
-	fputs("\n;\n;\nglobal main\nextern putchar\n\nsection .text\n", out);
-	fputs("main:\n", out);
+	fputs("\n;\n;\nglobal main\nextern putchar\n\nsection .bss\n  buf resb 8192\n\n", out); 
+	fputs("section .text\n", out);
+	fputs("main:\n  mov edi,buf\n", out);
 
 	// Start of program in assembly file
 
@@ -59,19 +60,19 @@ int compile_bf(const char *filename) {
 	while ((c = fgetc(source)) != EOF) {
 		switch(c) {
 			case '>':
-				fputs("; >\n  add esp,8\n", out);
+				fputs("; >\n  inc edi\n", out);
 				break;
 			case '<': 
-				fputs("; <\n  sub esp,8\n", out);
+				fputs("; <\n  dec edi\n", out);
 				break;
 			case '+': 
-				fputs("; +\n  mov rax,[esp]\n  inc rax\n  mov [esp],rax\n", out);
+				fputs("; +\n  mov rax,[edi]\n  inc rax\n  mov [edi],rax\n", out);
 				break;
 			case '-':
-				fputs("; +\n  mov rax,[esp]\n  dec rax\n  mov [esp],rax\n", out);
+				fputs("; -\n  mov rax,[edi]\n  dec rax\n  mov [edi],rax\n", out);
 				break;
 			case '.': 
-				fputs("; .\n  mov rax,[esp]\n  push rax\n  call putchar\n", out);
+				fputs("; .\n  mov rax,[edi]\n  push ax\n  call putchar\n", out);
 				break;
 			case ',': 
 				fputs("; ,\ngetch", out);
@@ -84,7 +85,7 @@ int compile_bf(const char *filename) {
 			case '[':
 				fputs("; [\nloops", out);
 				fprintf(out, "%d", jmpId);
-				fputs(":\n  mov rax,[esp]\n  cmp rax,0\n  je loope", out);
+				fputs(":\n  mov rax,[edi]\n  cmp rax,0\n  je loope", out);
 				fprintf(out, "%d", jmpId);
 				fputs("\n", out);
 				jmpStack[jmpPtr] = jmpId;
@@ -94,7 +95,7 @@ int compile_bf(const char *filename) {
 			case ']':
 				jmpPtr--;
 				id = jmpStack[jmpPtr];
-				fputs("; ]\n  mov rax,[esp]\n  cmp rax,0\n  jne loops", out);
+				fputs("; ]\n  mov rax,[edi]\n  cmp rax,0\n  jne loops", out);
 				fprintf(out, "%d", id);
 				fputs("\nloope", out);
 				fprintf(out, "%d", id);
