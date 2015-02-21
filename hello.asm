@@ -1,0 +1,546 @@
+; hello.asm
+; compiled from hello.bf
+; assemble: nasm -f elf64 -o hello.o hello.asm
+; link: gcc -o <cmd> hello.o
+;
+;
+global main
+extern putchar
+
+section .bss
+  buf resb 8192
+
+section .text
+main:
+  push rbp
+  mov rbp,rsp
+  xor rcx,rcx
+  mov rdi,buf
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; [
+.loops0:
+  mov rax,[rdi]
+  cmp rax,0
+  je .loope0
+; <
+  dec rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; >
+  inc rdi
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; ]
+  mov rax,[rdi]
+  cmp rax,0
+  jne .loops0
+.loope0:
+; <
+  dec rdi
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; >
+  inc rdi
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; >
+  inc rdi
+; [
+.loops1:
+  mov rax,[rdi]
+  cmp rax,0
+  je .loope1
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; ]
+  mov rax,[rdi]
+  cmp rax,0
+  jne .loops1
+.loope1:
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; <
+  dec rdi
+; [
+.loops2:
+  mov rax,[rdi]
+  cmp rax,0
+  je .loope2
+; >
+  inc rdi
+; [
+.loops3:
+  mov rax,[rdi]
+  cmp rax,0
+  je .loope3
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; <
+  dec rdi
+; <
+  dec rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; >
+  inc rdi
+; ]
+  mov rax,[rdi]
+  cmp rax,0
+  jne .loops3
+.loope3:
+; <
+  dec rdi
+; <
+  dec rdi
+; ]
+  mov rax,[rdi]
+  cmp rax,0
+  jne .loops2
+.loope2:
+; >
+  inc rdi
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; >
+  inc rdi
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; <
+  dec rdi
+; <
+  dec rdi
+; <
+  dec rdi
+; [
+.loops4:
+  mov rax,[rdi]
+  cmp rax,0
+  je .loope4
+; [
+.loops5:
+  mov rax,[rdi]
+  cmp rax,0
+  je .loope5
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; ]
+  mov rax,[rdi]
+  cmp rax,0
+  jne .loops5
+.loope5:
+; <
+  dec rdi
+; [
+.loops6:
+  mov rax,[rdi]
+  cmp rax,0
+  je .loope6
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; ]
+  mov rax,[rdi]
+  cmp rax,0
+  jne .loops6
+.loope6:
+; >
+  inc rdi
+; ]
+  mov rax,[rdi]
+  cmp rax,0
+  jne .loops4
+.loope4:
+; <
+  dec rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; >
+  inc rdi
+; >
+  inc rdi
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; -
+  mov rax,[rdi]
+  dec rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; >
+  inc rdi
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
+; >
+  inc rdi
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; +
+  mov rax,[rdi]
+  inc rax
+  mov [rdi],rax
+; .
+  mov rax,[rdi]
+  push rax
+  call putchar
