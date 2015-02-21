@@ -40,6 +40,7 @@ int compile_bf(const char *filename) {
 	}	
 
 	// Header information in assembly file
+	fputs("BITS 64\n\n", out);
 	fputs("; ", out);
 	fputs(dest, out);
 	fputs("\n; compiled from ", out);
@@ -50,9 +51,9 @@ int compile_bf(const char *filename) {
 	fputs(dest, out);
 	fputs("\n; link: gcc -o <cmd> ", out);
 	fputs(obj, out);
-	fputs("\n;\n;\nglobal main\nextern putchar\n\nsection .bss\n  buf resb 8192\n\n", out); 
+	fputs("\n;\n;\nglobal main\nextern putchar\n\nsection .bss\nbuf resb 8192\n\n", out); 
 	fputs("section .text\n", out);
-	fputs("main:\n  mov edi,buf\n", out);
+	fputs("main:\n  xor rbx,rbx\n  mov rbx,buf+1\n", out);
 
 	// Start of program in assembly file
 
@@ -60,19 +61,19 @@ int compile_bf(const char *filename) {
 	while ((c = fgetc(source)) != EOF) {
 		switch(c) {
 			case '>':
-				fputs("; >\n  inc edi\n", out);
+				fputs("; >\n  add rbx,8\n", out);
 				break;
 			case '<': 
-				fputs("; <\n  dec edi\n", out);
+				fputs("; <\n  sub rbx,8\n", out);
 				break;
 			case '+': 
-				fputs("; +\n  mov rax,[edi]\n  inc rax\n  mov [edi],rax\n", out);
+				fputs("; +\n  mov rax,[rbx]\n  inc rax\n  mov [rbx],rax\n", out);
 				break;
 			case '-':
-				fputs("; -\n  mov rax,[edi]\n  dec rax\n  mov [edi],rax\n", out);
+				fputs("; -\n  mov rax,[rbx]\n  dec rax\n  mov [rbx],rax\n", out);
 				break;
 			case '.': 
-				fputs("; .\n  mov rax,[edi]\n  push ax\n  call putchar\n", out);
+				fputs("; .\n  mov rax,[rbx]\n  mov rdi,rax\n  call putchar\n", out);
 				break;
 			case ',': 
 				fputs("; ,\ngetch", out);
@@ -83,9 +84,9 @@ int compile_bf(const char *filename) {
 				getId++;
 				break;
 			case '[':
-				fputs("; [\nloops", out);
+				fputs("; [\n.loops", out);
 				fprintf(out, "%d", jmpId);
-				fputs(":\n  mov rax,[edi]\n  cmp rax,0\n  je loope", out);
+				fputs(":\n  mov rax,[rbx]\n  cmp rax,0\n  je .loope", out);
 				fprintf(out, "%d", jmpId);
 				fputs("\n", out);
 				jmpStack[jmpPtr] = jmpId;
@@ -95,9 +96,9 @@ int compile_bf(const char *filename) {
 			case ']':
 				jmpPtr--;
 				id = jmpStack[jmpPtr];
-				fputs("; ]\n  mov rax,[edi]\n  cmp rax,0\n  jne loops", out);
+				fputs("; ]\n  mov rax,[rbx]\n  cmp rax,0\n  jne .loops", out);
 				fprintf(out, "%d", id);
-				fputs("\nloope", out);
+				fputs("\n.loope", out);
 				fprintf(out, "%d", id);
 				fputs(":\n", out);
 				break;
