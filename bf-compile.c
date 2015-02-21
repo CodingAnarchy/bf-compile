@@ -51,7 +51,7 @@ int compile_bf(const char *filename) {
 	fputs(dest, out);
 	fputs("\n; link: gcc -o <cmd> ", out);
 	fputs(obj, out);
-	fputs("\n;\n;\nglobal main\nextern putchar\n\nsection .bss\nbuf resb 8192\n\n", out); 
+	fputs("\n;\n;\nglobal main\nextern putchar, getchar\n\nsection .bss\nbuf resb 8192\n\n", out); 
 	fputs("section .text\n", out);
 	fputs("main:\n  xor rbx,rbx\n  mov rbx,buf+1\n", out);
 
@@ -76,11 +76,11 @@ int compile_bf(const char *filename) {
 				fputs("; .\n  mov rax,[rbx]\n  mov rdi,rax\n  call putchar\n", out);
 				break;
 			case ',': 
-				fputs("; ,\ngetch", out);
+				fputs("; ,\n.getch", out);
 				fprintf(out, "%d", getId);
-				fputs(":\n  call getchar\n  cmp rax,0\n  jl getch", out);
+				fputs(":\n  call getchar\n  mov rdi,rax\n  cmp rax,0\n  jl .getch", out);
 				fprintf(out, "%d", getId);
-				fputs("\n", out);
+				fputs("\n  mov [rbx],rax\n", out);
 				getId++;
 				break;
 			case '[':
