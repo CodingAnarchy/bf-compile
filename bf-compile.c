@@ -17,7 +17,7 @@ int compile_bf(const char *filename) {
 	char *dest, *obj, *dot;
 	int c, len, id;
 	int jmpId = 0, jmpPtr = 0, bufSize = 0, getId = 0;
-	char jmpStack[100];
+	int jmpStack[100];
 
 	if ((source = fopen(filename, "rb")) == NULL) {
 		fprintf(stderr, "Could not open file %s", filename);
